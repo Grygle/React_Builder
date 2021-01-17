@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Aux from '../../hoc/Auxiliary';
 import Product from '../../components/Product/Product';
+import Controls from '../../components/Product/Controls/Controls';
 
 class Builder extends Component {
     state = {
@@ -16,7 +17,7 @@ class Builder extends Component {
         return (
             <Aux>
                 <Product ingredients={this.state.ingredients}/>
-                <div>Controls</div>
+                <Controls />
             </Aux>
         );
     }
