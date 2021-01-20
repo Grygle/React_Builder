@@ -5,8 +5,8 @@ import styles from './Control.module.css';
 const control = (props) => (
     <div className={styles.Control}>
         <div>{props.ingredientLabel}</div>
-        <button >Remove</button>
-        <button>Add</button>
+        <button onClick={props.removed} disabled={props.disabled}>Remove</button>
+        <button onClick={props.added}>Add</button>
     </div>
 );
 

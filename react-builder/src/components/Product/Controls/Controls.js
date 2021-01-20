@@ -13,7 +13,13 @@ const arrayOfControls = [
 const controls = (props) => (
     <div className={styles.Controls}>
         {arrayOfControls.map(element => (
-            <Control key={element.label} ingredientLabel={element.label} />
+            <Control 
+                key={element.label} 
+                ingredientLabel={element.label}
+                added={() => props.ingredientAdded(element.type)}
+                removed={() => props.ingredientRemoved(element.type)}
+                disabled={props.disabled[element.type]}
+            />
         ))}
     </div>
 );
