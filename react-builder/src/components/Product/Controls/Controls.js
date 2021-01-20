@@ -12,6 +12,7 @@ const arrayOfControls = [
 
 const controls = (props) => (
     <div className={styles.Controls}>
+        <p>Price: <strong>{props.price.toFixed(2)}</strong></p>
         {arrayOfControls.map(element => (
             <Control 
                 key={element.label} 

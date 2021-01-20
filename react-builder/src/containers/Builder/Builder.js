@@ -72,6 +72,7 @@ class Builder extends Component {
                     ingredientAdded={this.addIngredientHandler}
                     ingredientRemoved={this.removeIngredientHandler}
                     disabled={disabled}
+                    price={this.state.totalPrice}
                 />
             </Aux>
         );
