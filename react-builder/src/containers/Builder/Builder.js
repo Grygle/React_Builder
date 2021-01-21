@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import Aux from '../../hoc/Auxiliary';
 import Product from '../../components/Product/Product';
 import Controls from '../../components/Product/Controls/Controls';
+import Modal from '../../components/UI/Modal/Modal';
+import OrderSummary from '../../components/Product/OrderSummary/OrderSummary';
 
 const INGREDIENT_PRICE = {
     salad: 0.5,
@@ -18,7 +20,20 @@ class Builder extends Component {
             cheese: 0,
             meat: 0
         },
-        totalPrice: 2
+        totalPrice: 2,
+        canPurchase: false
+    }
+
+    updateCanPurchaseState = (ingredients) => {
+        //switch keys(string) to values
+        const sum = Object.keys(ingredients)
+            .map(key => {
+                return ingredients[key]
+            })
+            .reduce((sum, element) => {
+                return sum + element;
+            }, 0)
+        this.setState({canPurchase: sum > 0})
     }
 
     addIngredientHandler = (type) => {
@@ -37,6 +52,7 @@ class Builder extends Component {
             ingredients: updatedIngredients,
             totalPrice: newPrice
         })
+        this.updateCanPurchaseState(updatedIngredients);
     }
 
     removeIngredientHandler = (type) => {
@@ -55,6 +71,7 @@ class Builder extends Component {
                 ingredients: updatedIngredients,
                 totalPrice: newPrice
             })
+            this.updateCanPurchaseState(updatedIngredients);
         }
     }
 
@@ -67,11 +84,15 @@ class Builder extends Component {
         }
         return (
             <Aux>
+                <Modal>
+                    <OrderSummary ingredients={this.state.ingredients}/>
+                </Modal>
                 <Product ingredients={this.state.ingredients}/>
                 <Controls 
                     ingredientAdded={this.addIngredientHandler}
                     ingredientRemoved={this.removeIngredientHandler}
                     disabled={disabled}
+                    canPurchase={this.state.canPurchase}
                     price={this.state.totalPrice}
                 />
             </Aux>
