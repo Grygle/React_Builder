@@ -21,7 +21,8 @@ class Builder extends Component {
             meat: 0
         },
         totalPrice: 2,
-        canPurchase: false
+        canPurchase: false,
+        buying: false
     }
 
     updateCanPurchaseState = (ingredients) => {
@@ -75,6 +76,10 @@ class Builder extends Component {
         }
     }
 
+    buyHandler = () => {
+        this.setState({buying: true});
+    }
+
     render(){
         const disabled = {
             ...this.state.ingredients
@@ -84,7 +89,7 @@ class Builder extends Component {
         }
         return (
             <Aux>
-                <Modal>
+                <Modal show={this.state.buying}>
                     <OrderSummary ingredients={this.state.ingredients}/>
                 </Modal>
                 <Product ingredients={this.state.ingredients}/>
@@ -93,6 +98,7 @@ class Builder extends Component {
                     ingredientRemoved={this.removeIngredientHandler}
                     disabled={disabled}
                     canPurchase={this.state.canPurchase}
+                    ordered={this.buyHandler}
                     price={this.state.totalPrice}
                 />
             </Aux>

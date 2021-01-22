@@ -24,7 +24,8 @@ const controls = (props) => (
         ))}
         <button 
             className={styles.OrderButton}
-            disabled={!props.canPurchase}>Place order
+            disabled={!props.canPurchase}
+            onClick={props.ordered}>Place order
         </button>
     </div>
 );
