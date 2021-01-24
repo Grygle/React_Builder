@@ -80,6 +80,10 @@ class Builder extends Component {
         this.setState({buying: true});
     }
 
+    cancelBuyingHandler = () => {
+        this.setState({buying: false});
+    }
+
     render(){
         const disabled = {
             ...this.state.ingredients
@@ -89,7 +93,7 @@ class Builder extends Component {
         }
         return (
             <Aux>
-                <Modal show={this.state.buying}>
+                <Modal show={this.state.buying} modalClosed={this.cancelBuyingHandler}>
                     <OrderSummary ingredients={this.state.ingredients}/>
                 </Modal>
                 <Product ingredients={this.state.ingredients}/>
