@@ -99,6 +99,7 @@ class Builder extends Component {
                 <Modal show={this.state.buying} modalClosed={this.cancelBuyingHandler}>
                     <OrderSummary 
                         ingredients={this.state.ingredients}
+                        price={this.state.totalPrice}
                         buyCancel={this.cancelBuyingHandler}
                         buyContinue={this.continueBuyingHandler}
                     />
