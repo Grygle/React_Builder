@@ -1,4 +1,4 @@
-import Layout from './components/Layout/Layout'
+import Layout from './containers/Layout/Layout'
 import Builder from './containers/Builder/Builder'
 function App() {
   return (
