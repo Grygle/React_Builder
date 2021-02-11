@@ -4,6 +4,7 @@ import Product from '../../components/Product/Product';
 import Controls from '../../components/Product/Controls/Controls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Product/OrderSummary/OrderSummary';
+import axios from '../../axios-orders';
 
 const INGREDIENT_PRICE = {
     salad: 0.5,
@@ -84,7 +85,24 @@ class Builder extends Component {
         this.setState({buying: false});
     }
     continueBuyingHandler = () => {
-        alert('continue');
+        //alert('continue');
+        const order = {
+            ingredients: this.state.ingredients,
+            price: this.state.totalPrice,
+            customer: {
+                name: 'Tom Jones',
+                address: {
+                    street: 'Test street 2',
+                    zipCode: '12312',
+                    city: 'Warsaw'
+                },
+                email: 'tset@test.com'
+            },
+            deliveryTime: 'fast'
+        }
+        axios.post('/orders.json', order)
+            .then(response => console.log(response))
+            .catch(error => console.log(error));
     }
 
     render(){
