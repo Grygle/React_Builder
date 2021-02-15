@@ -9,7 +9,9 @@ const errorHandler = (WrappedComponent, axios) => {
             error: null
         }
 
-        componentDidMount(){
+        //constructor can be used to prevent using componentWillMount
+        //called before the child components are rendered
+        componentWillMount(){
             axios.interceptors.request.use(req => {
                 this.setState({error: null});
                 return req;

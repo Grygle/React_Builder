@@ -17,16 +17,22 @@ const INGREDIENT_PRICE = {
 
 class Builder extends Component {
     state = {
-        ingredients: {
-            salad: 0,
-            bacon: 0,
-            cheese: 0,
-            meat: 0
-        },
+        ingredients: null,
         totalPrice: 2,
         canPurchase: false,
         buying: false,
-        loading: false
+        loading: false,
+        error: false
+    }
+
+    componentDidMount () {
+        axios.get('/ingredients.json')
+            .then(response => {
+                this.setState({ingredients: response.data});
+            })
+            .catch(error => {
+                this.setState({error: true});
+            })
     }
 
     updateCanPurchaseState = (ingredients) => {
@@ -122,28 +128,40 @@ class Builder extends Component {
         for (let key in disabled) {
             disabled[key] = disabled[key] <= 0;
         }
-        let orderSummary =  <OrderSummary 
-            ingredients={this.state.ingredients}
-            price={this.state.totalPrice}
-            buyCancel={this.cancelBuyingHandler}
-            buyContinue={this.continueBuyingHandler}/>
+        let orderSummary = null;
+
+        let product = this.state.error ? <p>Ingredients can't be loaded!</p> : <Spinner />
+
+        if(this.state.ingredients !== null){
+            product = (
+                <Aux>
+                    <Product ingredients={this.state.ingredients}/>
+                    <Controls 
+                        ingredientAdded={this.addIngredientHandler}
+                        ingredientRemoved={this.removeIngredientHandler}
+                        disabled={disabled}
+                        canPurchase={this.state.canPurchase}
+                        ordered={this.buyHandler}
+                        price={this.state.totalPrice}
+                    />
+                </Aux>
+            )
+            orderSummary =  <OrderSummary 
+                ingredients={this.state.ingredients}
+                price={this.state.totalPrice}
+                buyCancel={this.cancelBuyingHandler}
+                buyContinue={this.continueBuyingHandler}/>
+        }
         if (this.state.loading) {
             orderSummary = <Spinner />
         }
+
         return (
             <Aux>
                 <Modal show={this.state.buying} modalClosed={this.cancelBuyingHandler}>
                     {orderSummary}
                 </Modal>
-                <Product ingredients={this.state.ingredients}/>
-                <Controls 
-                    ingredientAdded={this.addIngredientHandler}
-                    ingredientRemoved={this.removeIngredientHandler}
-                    disabled={disabled}
-                    canPurchase={this.state.canPurchase}
-                    ordered={this.buyHandler}
-                    price={this.state.totalPrice}
-                />
+                {product}
             </Aux>
         );
     }
