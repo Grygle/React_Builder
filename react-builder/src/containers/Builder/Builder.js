@@ -6,6 +6,7 @@ import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Product/OrderSummary/OrderSummary';
 import axios from '../../axios-orders';
 import Spinner from '../../components/UI/Spinner/Spinner';
+import errorHandler from '../../hoc/errorHandler/errorHandler';
 
 const INGREDIENT_PRICE = {
     salad: 0.5,
@@ -86,6 +87,7 @@ class Builder extends Component {
     cancelBuyingHandler = () => {
         this.setState({buying: false});
     }
+
     continueBuyingHandler = () => {
         //alert('continue');
         this.setState({loading: true});
@@ -106,10 +108,10 @@ class Builder extends Component {
         }
         axios.post('/orders.json', order)
             .then(response => {
-                this.setState({loading: false});
+                this.setState({loading: false, buying: false});
             })
             .catch(error => {
-                this.setState({loading: false});
+                this.setState({loading: false, buying: false});
             });
     }
 
@@ -147,4 +149,4 @@ class Builder extends Component {
     }
 }
 
-export default Builder;
+export default errorHandler(Builder, axios);
