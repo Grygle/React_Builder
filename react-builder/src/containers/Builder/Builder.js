@@ -4,6 +4,9 @@ import Product from '../../components/Product/Product';
 import Controls from '../../components/Product/Controls/Controls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Product/OrderSummary/OrderSummary';
+import axios from '../../axios-orders';
+import Spinner from '../../components/UI/Spinner/Spinner';
+import errorHandler from '../../hoc/errorHandler/errorHandler';
 
 const INGREDIENT_PRICE = {
     salad: 0.5,
@@ -14,15 +17,22 @@ const INGREDIENT_PRICE = {
 
 class Builder extends Component {
     state = {
-        ingredients: {
-            salad: 0,
-            bacon: 0,
-            cheese: 0,
-            meat: 0
-        },
+        ingredients: null,
         totalPrice: 2,
         canPurchase: false,
-        buying: false
+        buying: false,
+        loading: false,
+        error: false
+    }
+
+    componentDidMount () {
+        axios.get('/ingredients.json')
+            .then(response => {
+                this.setState({ingredients: response.data});
+            })
+            .catch(error => {
+                this.setState({error: true});
+            })
     }
 
     updateCanPurchaseState = (ingredients) => {
@@ -83,8 +93,32 @@ class Builder extends Component {
     cancelBuyingHandler = () => {
         this.setState({buying: false});
     }
+
     continueBuyingHandler = () => {
-        alert('continue');
+        //alert('continue');
+        this.setState({loading: true});
+
+        const order = {
+            ingredients: this.state.ingredients,
+            price: this.state.totalPrice.toFixed(2),
+            customer: {
+                name: 'Tom Jones',
+                address: {
+                    street: 'Test street 2',
+                    zipCode: '12312',
+                    city: 'Warsaw'
+                },
+                email: 'tset@test.com'
+            },
+            deliveryTime: 'fast'
+        }
+        axios.post('/orders.json', order)
+            .then(response => {
+                this.setState({loading: false, buying: false});
+            })
+            .catch(error => {
+                this.setState({loading: false, buying: false});
+            });
     }
 
     render(){
@@ -94,28 +128,43 @@ class Builder extends Component {
         for (let key in disabled) {
             disabled[key] = disabled[key] <= 0;
         }
+        let orderSummary = null;
+
+        let product = this.state.error ? <p>Ingredients can't be loaded!</p> : <Spinner />
+
+        if(this.state.ingredients !== null){
+            product = (
+                <Aux>
+                    <Product ingredients={this.state.ingredients}/>
+                    <Controls 
+                        ingredientAdded={this.addIngredientHandler}
+                        ingredientRemoved={this.removeIngredientHandler}
+                        disabled={disabled}
+                        canPurchase={this.state.canPurchase}
+                        ordered={this.buyHandler}
+                        price={this.state.totalPrice}
+                    />
+                </Aux>
+            )
+            orderSummary =  <OrderSummary 
+                ingredients={this.state.ingredients}
+                price={this.state.totalPrice}
+                buyCancel={this.cancelBuyingHandler}
+                buyContinue={this.continueBuyingHandler}/>
+        }
+        if (this.state.loading) {
+            orderSummary = <Spinner />
+        }
+
         return (
             <Aux>
                 <Modal show={this.state.buying} modalClosed={this.cancelBuyingHandler}>
-                    <OrderSummary 
-                        ingredients={this.state.ingredients}
-                        price={this.state.totalPrice}
-                        buyCancel={this.cancelBuyingHandler}
-                        buyContinue={this.continueBuyingHandler}
-                    />
+                    {orderSummary}
                 </Modal>
-                <Product ingredients={this.state.ingredients}/>
-                <Controls 
-                    ingredientAdded={this.addIngredientHandler}
-                    ingredientRemoved={this.removeIngredientHandler}
-                    disabled={disabled}
-                    canPurchase={this.state.canPurchase}
-                    ordered={this.buyHandler}
-                    price={this.state.totalPrice}
-                />
+                {product}
             </Aux>
         );
     }
 }
 
-export default Builder;
+export default errorHandler(Builder, axios);
