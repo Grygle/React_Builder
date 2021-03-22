@@ -5,11 +5,16 @@ const input = (props) => {
     let inputElementType = null;
 
     switch(props.elementType){
-        case('input'):
-            inputElementType = <input 
-                className={styles.InputElement} 
-                {...props.elementConfig} 
-                value={props.value}/>;
+        case('select'):
+            inputElementType = (
+                <select 
+                    className={styles.InputElement}
+                    value={props.value}>
+                    {props.elementConfig.options.map(option => (
+                        <option key={option.value} value={option.value}>{option.displayValue}</option>
+                    ))}
+                </select>
+            );
             break;
         case('textarea'):
             inputElementType = <textarea 
