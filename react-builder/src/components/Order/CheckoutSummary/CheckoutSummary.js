@@ -6,7 +6,7 @@ import styles from './CheckoutSummary.module.css';
 const CheckoutSummary = (props) => {
     return(
         <div className={styles.CheckoutSummary}>
-            <h1>Your pizza</h1>
+            <h1>Your product</h1>
             <div style={{width: '100%', margin: 'auto'}}>
                 <Product ingredients={props.ingredients}/>
             </div>
